@@ -94,11 +94,6 @@ Frontend credit is shown directly in the app UI and links to https://pollination
   </a>
 </p>
 
-<p align="center">
-  <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer">
-    <img src="https://raw.githubusercontent.com/pollinations/pollinations/main/assets/logo-text.svg" alt="pollinations.ai Logo Text White" width="520" />
-  </a>
-</p>
 
 <p align="center">
   <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer">
