@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What If? Scenario Explorer</title>
+    <meta name="description" content="Explore Infinite Possibilities with branching AI-generated what-if timelines.">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #050512;
+            --bg-surface: rgba(13, 19, 42, 0.82);
+            --bg-surface-strong: rgba(9, 15, 36, 0.95);
+            --edge: rgba(124, 58, 237, 0.45);
+            --edge-strong: rgba(34, 211, 238, 0.55);
+            --text-primary: #eef2ff;
+            --text-muted: #b6c1f8;
+            --accent-cyan: #22d3ee;
+            --accent-purple: #a855f7;
+            --accent-pink: #f472b6;
+            --glow: 0 0 28px rgba(168, 85, 247, 0.34);
+        }
+
+        body {
+            font-family: "Manrope", sans-serif;
+            color: var(--text-primary);
+            background:
+                radial-gradient(1150px 600px at -5% -20%, rgba(34, 211, 238, 0.18), transparent 55%),
+                radial-gradient(900px 550px at 110% 10%, rgba(168, 85, 247, 0.22), transparent 58%),
+                radial-gradient(1200px 700px at 50% 120%, rgba(244, 114, 182, 0.15), transparent 62%),
+                var(--bg-main);
+            min-height: 100vh;
+        }
+
+        .title-font {
+            font-family: "Audiowide", cursive;
+            letter-spacing: 0.03em;
+        }
+
+        .glass-panel {
+            background: linear-gradient(155deg, rgba(17, 24, 52, 0.9), rgba(8, 13, 30, 0.9));
+            border: 1px solid var(--edge);
+            box-shadow: var(--glow);
+            backdrop-filter: blur(8px);
+        }
+
+        .grain::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.06;
+            mix-blend-mode: soft-light;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='8' cy='8' r='1'/%3E%3Ccircle cx='53' cy='27' r='1'/%3E%3Ccircle cx='124' cy='14' r='1'/%3E%3Ccircle cx='89' cy='65' r='1'/%3E%3Ccircle cx='147' cy='93' r='1'/%3E%3Ccircle cx='21' cy='113' r='1'/%3E%3Ccircle cx='76' cy='145' r='1'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .input-shell {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(5, 11, 28, 0.88);
+        }
+
+        .message-markdown h1,
+        .message-markdown h2,
+        .message-markdown h3 {
+            margin-top: 1rem;
+            margin-bottom: 0.55rem;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.25;
+        }
+
+        .message-markdown h1 { font-size: 1.35rem; }
+        .message-markdown h2 { font-size: 1.18rem; }
+        .message-markdown h3 { font-size: 1.06rem; }
+
+        .message-markdown p,
+        .message-markdown ul,
+        .message-markdown ol,
+        .message-markdown blockquote {
+            margin-top: 0.65rem;
+            margin-bottom: 0.65rem;
+            line-height: 1.65;
+        }
+
+        .message-markdown ul,
+        .message-markdown ol {
+            padding-left: 1.25rem;
+        }
+
+        .message-markdown li {
+            margin-top: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .message-markdown code {
+            border-radius: 0.35rem;
+            padding: 0.15rem 0.32rem;
+            background: rgba(255, 255, 255, 0.08);
+            color: #bfdbfe;
+        }
+
+        .message-markdown pre {
+            overflow-x: auto;
+            padding: 0.9rem;
+            border-radius: 0.7rem;
+            background: rgba(2, 6, 23, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .suggestion-chip {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(14, 23, 48, 0.95);
+            color: #d9f8ff;
+            transition: all 180ms ease;
+        }
+
+        .suggestion-chip:hover {
+            transform: translateY(-1px);
+            border-color: rgba(168, 85, 247, 0.85);
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.3);
+        }
+
+        .rise-in {
+            animation: riseIn 430ms ease forwards;
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse-dot {
+            width: 0.6rem;
+            height: 0.6rem;
+            border-radius: 9999px;
+            display: inline-block;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 14px rgba(34, 211, 238, 0.7);
+            animation: pulseDot 1.15s infinite ease-in-out;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(0.85); opacity: 0.6; }
+            50% { transform: scale(1.16); opacity: 1; }
+        }
+
+        .credit-logo {
+            filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.25));
+            opacity: 0.95;
+        }
+
+        .credit-badge {
+            filter: drop-shadow(0 0 14px rgba(138, 43, 226, 0.38));
+        }
+
+        .support-panel {
+            border: 1px solid rgba(139, 92, 246, 0.38);
+            background: linear-gradient(145deg, rgba(19, 14, 40, 0.86), rgba(8, 12, 30, 0.9));
+        }
+    </style>
+</head>
+<body class="grain">
+    <div class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-8 sm:py-10">
+        <header class="glass-panel rise-in rounded-2xl p-5 sm:p-7">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.25em] text-cyan-300/90">Explore Infinite Possibilities</p>
+                    <h1 class="title-font mt-2 text-3xl leading-tight text-white sm:text-4xl">What If? Scenario Explorer</h1>
+                    <p class="mt-3 max-w-2xl text-sm text-indigo-100/85 sm:text-base">
+                        Enter any turning point in history, science, or your own life. Watch consequences unfold across years and generations through deeply detailed, branching timelines.
+                    </p>
+                </div>
+
+                <div class="flex gap-2 sm:gap-3">
+                    <button id="newScenarioBtn" class="rounded-xl border border-fuchsia-300/45 bg-fuchsia-500/10 px-4 py-2 text-sm font-semibold text-fuchsia-100 transition hover:bg-fuchsia-500/25">
+                        New Scenario
+                    </button>
+                    <button id="continueBtn" class="rounded-xl border border-cyan-300/45 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-40" disabled>
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="mt-6 space-y-6 sm:mt-8">
+            <section class="glass-panel rise-in rounded-2xl p-4 sm:p-6" style="animation-delay: 90ms;">
+                <label for="scenarioInput" class="mb-2 block text-sm font-semibold tracking-wide text-indigo-100">
+                    Start your timeline
+                </label>
+                <div class="input-shell rounded-2xl p-3">
+                    <textarea
+                        id="scenarioInput"
+                        rows="6"
+                        placeholder="What if dinosaurs never went extinct and evolved intelligence before humans?"
+                        class="w-full resize-y rounded-xl border border-indigo-200/15 bg-slate-900/70 p-4 text-base text-indigo-50 outline-none transition placeholder:text-indigo-200/40 focus:border-cyan-300/60 focus:ring-2 focus:ring-cyan-300/25"
+                    ></textarea>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+                    <p id="statusText" class="text-xs text-indigo-200/70">Ready to explore a new reality.</p>
+                    <button id="exploreBtn" class="rounded-xl bg-gradient-to-r from-cyan-400 via-indigo-400 to-fuchsia-500 px-5 py-2.5 text-sm font-bold text-slate-950 shadow-xl shadow-cyan-500/25 transition hover:brightness-110">
+                        Explore This Scenario
+                    </button>
+                </div>
+            </section>
+
+            <section class="support-panel rise-in rounded-2xl p-4 sm:p-6" style="animation-delay: 120ms;">
+                <div class="flex flex-col gap-3">
+                    <h2 class="text-base font-extrabold text-indigo-50 sm:text-lg">Would you like to support me? Enter your own Pollinations API Key.</h2>
+                    <p class="text-xs text-indigo-200/75 sm:text-sm">Optional: if provided, your key is used for your timeline requests in this session. Leave blank to use the app default.</p>
+                    <div class="input-shell rounded-xl p-2.5">
+                        <input
+                            id="supportApiKeyInput"
+                            type="password"
+                            autocomplete="off"
+                            spellcheck="false"
+                            placeholder="sk_..."
+                            class="w-full rounded-lg border border-fuchsia-300/30 bg-slate-950/80 px-3 py-2 text-sm text-indigo-50 outline-none transition placeholder:text-indigo-200/35 focus:border-fuchsia-300/70 focus:ring-2 focus:ring-fuchsia-300/20"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <section id="chatPanel" class="glass-panel hidden rounded-2xl p-3 sm:p-5">
+                <div id="chatFeed" class="max-h-[68vh] space-y-4 overflow-y-auto rounded-xl border border-indigo-200/20 bg-slate-950/35 p-3 sm:p-4">
+                </div>
+            </section>
+
+            <footer class="glass-panel rise-in rounded-2xl p-4 sm:p-6" style="animation-delay: 160ms;">
+                <div class="flex flex-col gap-4">
+                    <p class="text-xs uppercase tracking-[0.23em] text-indigo-200/80">Built with pollinations.ai</p>
+                    <a
+                        href="https://pollinations.ai"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="w-fit text-sm font-extrabold text-cyan-200 underline decoration-cyan-300/50 underline-offset-4 hover:text-fuchsia-200"
+                    >
+                        https://pollinations.ai
+                    </a>
+
+                    <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+                        <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer">
+                            <img
+                                src="https://raw.githubusercontent.com/pollinations/pollinations/main/assets/logo.svg"
+                                alt="pollinations.ai Logo White"
+                                class="credit-logo h-12 w-auto"
+                                loading="lazy"
+                            >
+                        </a>
+                    </div>
+
+                    <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer" class="w-fit">
+                        <img
+                            src="https://img.shields.io/badge/Built%20with-Pollinations-8a2be2?style=for-the-badge&logo=data:image/png;base64,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&logoColor=white&labelColor=6a0dad"
+                            alt="Built With pollinations.ai"
+                            class="credit-badge h-8 w-auto"
+                            loading="lazy"
+                        >
+                    </a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
