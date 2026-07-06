@@ -86,7 +86,6 @@ python app.py
 
 Frontend credit is shown directly in the app UI and links to https://pollinations.ai.
 
-## Official Pollinations Branding
 
 <p align="center">
   <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer">
